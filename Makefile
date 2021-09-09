@@ -1,6 +1,7 @@
 NAME = philo
 
-SRCS = main.c
+SRCS = main.c \
+		aux.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -10,13 +11,13 @@ CFLAGS = -Wall -Wextra -Werror
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $@  $<
+	$(CC) $(CFLAGS) -o $@  $^
 
 clean:
-	rm $(OBJS)
+	rm -f $(OBJS)
 
 fclean: clean
-	rm $(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
