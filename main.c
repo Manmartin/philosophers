@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:15:33 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/09 20:19:37 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/16 17:55:57 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,16 @@ static void	parser(int argc, char **argv, t_params *params)
 		params->eat_number = ft_atoi(argv[5]);
 }
 
+void	test(void)
+{
+	system("leaks philo");
+}
+
 int	main(int argc, char **argv)
 {
 	t_params	params;
 
+	atexit(test);
 	if (argc < 5)
 		put_error("Not enough arguments\n");
 	else if (argc < 7)
