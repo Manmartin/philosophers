@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/16 18:09:14 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 13:59:47 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ typedef struct s_params {
 
 int		ft_atoi(const char *str);
 void	put_error(const char *str);
+
+void	parser(const int argc, const char **argv, t_params *params);
 
 void	init_simulation(t_params *params);
 
