@@ -6,22 +6,22 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:15:33 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 14:53:00 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:28:21 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
+/*
 void	test(void)
 {
 	system("leaks philo");
 }
-
+*/
 int	main(const int argc, const char **argv)
 {
 	t_params	params;
 
-	atexit(test);
+	//atexit(test);
 	if (argc < 5)
 		put_error("Not enough arguments\n");
 	else if (argc < 7)

@@ -6,13 +6,13 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 18:59:19 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/18 19:34:52 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:18:53 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	ft_strlen(const char *str)
+static int	ft_strlen(const char *str)
 {
 	int	i;
 

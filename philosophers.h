@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 13:59:47 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:22:56 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,6 @@
 # include <string.h>
 # include <pthread.h>
 
-typedef struct s_philosopher {
-	pthread_t		*thread;
-	pthread_mutex_t	*printer;
-	int				id_philo;
-}	t_philosoper;
-
 typedef struct s_params {
 	int				n_philo;
 	int				time_to_die;
@@ -33,10 +27,15 @@ typedef struct s_params {
 	int				time_to_sleep;
 	int				eat_number;
 
-	t_philosoper	**philos;
+	pthread_mutex_t	*printer;
 }	t_params;
 
-int		ft_atoi(const char *str);
+typedef struct s_philosopher {
+	int				id_philo;
+	pthread_t		*thread;
+	t_params		*p;
+}	t_philosoper;
+
 void	put_error(const char *str);
 
 void	parser(const int argc, const char **argv, t_params *params);

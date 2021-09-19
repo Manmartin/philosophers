@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/16 18:10:49 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:30:46 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ static void	*function(void *args)
 	t_philosoper	*philo;
 
 	philo = args;
-	pthread_mutex_lock(philo->printer);
+	pthread_mutex_lock(philo->p->printer);
 	printf("I'm philosopher number %i\n", philo->id_philo);
-	pthread_mutex_unlock(philo->printer);
+	pthread_mutex_unlock(philo->p->printer);
 	return (philo);
 }
 
@@ -38,7 +38,7 @@ static void	free_philosophers(t_philosoper **array, int n_philo)
 }
 
 static t_philosoper
-	**init_philosophers(t_params *params, pthread_mutex_t *printer)
+	**init_philosophers(t_params *params)
 {
 	t_philosoper	**array;
 	int				i;
@@ -52,7 +52,7 @@ static t_philosoper
 	{
 		array[i]->id_philo = i + 1;
 		array[i]->thread = malloc(sizeof(pthread_t *));
-		array[i]->printer = printer;
+		array[i]->p = params;
 		pthread_create(array[i]->thread, NULL, function, array[i]);
 		i++;
 	}
@@ -62,16 +62,18 @@ static t_philosoper
 void	init_simulation(t_params *params)
 {
 	pthread_mutex_t	printer;
+	t_philosoper	**philos;
 	int				i;
 
 	i = 0;
 	pthread_mutex_init(&printer, NULL);
-	params->philos = init_philosophers(params, &printer);
+	params->printer = &printer;
+	philos = init_philosophers(params);
 	while (i < params->n_philo)
 	{
-		pthread_join(*params->philos[i]->thread, NULL);
+		pthread_join(*philos[i]->thread, NULL);
 		i++;
 	}
-	free_philosophers(params->philos, params->n_philo);
+	free_philosophers(philos, params->n_philo);
 	pthread_mutex_destroy(&printer);
 }

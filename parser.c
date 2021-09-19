@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/18 19:24:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 14:50:41 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:27:30 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@ static const char	*recursive_parser(const char *s)
 	if (*s == '+' || *s == '-')
 	{
 		s++;
-		if (*s  < '0' || *s > '9')
+		if (*s < '0' || *s > '9')
 			return (0);
 	}
 	if (*s && *s >= '0' && *s <= '9')
 		while (*s && *s >= '0' && *s <= '9')
 			s++;
-	else 
+	else
 		return (0);
 	if (*s && !((*s >= 9 && *s <= 13) || *s == 32 ))
 		return (0);
@@ -34,7 +34,7 @@ static const char	*recursive_parser(const char *s)
 
 static int	n_parser(const char *s)
 {
-	int n;
+	int	n;
 
 	n = 0;
 	while (*s)
@@ -70,10 +70,11 @@ static int	parser_atoi(const char *str)
 
 static void	check_values(const t_params p)
 {
-	if (p.n_philo <= 0 || p.time_to_die <= 0 || p.time_to_eat <= 0 || p.time_to_sleep <= 0)
+	if (p.n_philo <= 0 || p.time_to_die <= 0
+		|| p.time_to_eat <= 0 || p.time_to_sleep <= 0)
 		put_error("Parameters' values can't be null or negative\n");
 	if (p.n_philo > 200)
-		put_error("Sorry, we dont have more than 200 forks");
+		put_error("Sorry, we dont have more than 200 forks\n");
 	if (p.n_philo == 1)
 		put_error("You are a really \
 bad person who wants to see a poor lonely philosopher die alone :(\n");
@@ -81,7 +82,7 @@ bad person who wants to see a poor lonely philosopher die alone :(\n");
 
 void	parser(const int argc, const char **argv, t_params *params)
 {
-	int n;
+	int	n;
 
 	n = 1;
 	while (n < argc)
