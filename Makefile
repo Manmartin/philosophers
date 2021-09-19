@@ -8,12 +8,12 @@ SRCS = main.c \
 OBJS = $(SRCS:.c=.o)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -o3
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $@  $^
+	$(CC) $(CFLAGS)  -o $@  $^
 
 clean:
 	rm -f $(OBJS)

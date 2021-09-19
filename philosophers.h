@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 15:22:56 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 15:56:53 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct s_params {
 	int				eat_number;
 
 	pthread_mutex_t	*printer;
+	pthread_mutex_t	**forks;
 }	t_params;
 
 typedef struct s_philosopher {
