@@ -6,16 +6,20 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 18:08:30 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/19 20:10:31 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static void	printer(t_philosoper	*philo, const char *s)
+static void	printer(t_philosoper *philo, const char *s)
 {
+	struct timeval	time;
+
 	pthread_mutex_lock(philo->p->printer);
-	printf("%i %s\n", philo->id_philo, s);
+	gettimeofday(&time, NULL);
+	printf("%i %i %s\n", time.tv_usec, philo->id_philo, s);
+	philo->timestamp = time.tv_usec;
 	pthread_mutex_unlock(philo->p->printer);
 }
 
@@ -26,14 +30,10 @@ static void	*life(void *args)
 	int				f2;
 
 	philo = (t_philosoper *)args;
-	f1 = philo->id_philo - 2;
-	if (f1 == -1)
-		f1 = philo->p->n_philo - 1;
-	f2 = philo->id_philo - 1;
+	f1 = choose_fork(philo, 1);
+	f2 = choose_fork(philo, 2);
 	while (1)
 	{
-		if (philo->id_philo % 2 == 0)
-			usleep(500);
 		pthread_mutex_lock(philo->p->forks[f1]);
 		printer(philo, "has taken a fork");
 		pthread_mutex_lock(philo->p->forks[f2]);
@@ -46,23 +46,6 @@ static void	*life(void *args)
 		printer(philo, "is thinking");
 	}
 	return (args);
-}
-
-static void	free_philosophers(t_philosoper **array, t_params *params)
-{
-	int	i;
-
-	i = 0;
-	while (i < params->n_philo)
-	{
-		free(array[i]->thread);
-		free(array[i]);
-		pthread_mutex_destroy(params->forks[i]);
-		free(params->forks[i]);
-		i++;
-	}
-	free(params->forks);
-	free(array);
 }
 
 static void	init_forks(t_params *params)
@@ -81,6 +64,7 @@ static void	init_forks(t_params *params)
 static t_philosoper	**init_philosophers(t_params *params)
 {
 	t_philosoper	**array;
+	struct timeval	time;
 	int				i;
 
 	i = 0;
@@ -93,6 +77,8 @@ static t_philosoper	**init_philosophers(t_params *params)
 		array[i]->id_philo = i + 1;
 		array[i]->thread = malloc(sizeof(pthread_t *));
 		array[i]->p = params;
+		gettimeofday(&time, NULL);
+		array[1]->timestamp = time.tv_usec;
 		pthread_create(array[i]->thread, NULL, life, array[i]);
 		i++;
 	}
@@ -101,20 +87,30 @@ static t_philosoper	**init_philosophers(t_params *params)
 
 void	init_simulation(t_params *params)
 {
-	pthread_mutex_t	printer;
+	pthread_mutex_t	print;
 	t_philosoper	**philos;
+	struct timeval	time;
 	int				i;
 
 	i = 0;
-	pthread_mutex_init(&printer, NULL);
-	params->printer = &printer;
+	pthread_mutex_init(&print, NULL);
+	params->printer = &print;
 	init_forks(params);
 	philos = init_philosophers(params);
+	while (1)
+	{
+		gettimeofday(&time, NULL);
+		if (time.tv_usec - philos[0]->timestamp >= params->time_to_die * 1000)
+		{
+			free_philosophers(philos, params);
+			exit(0);
+		}
+	}
 	while (i < params->n_philo)
 	{
 		pthread_join(*philos[i]->thread, NULL);
 		i++;
 	}
 	free_philosophers(philos, params);
-	pthread_mutex_destroy(&printer);
+	pthread_mutex_destroy(&print);
 }
