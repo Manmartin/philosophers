@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 19:11:47 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 19:37:51 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ static void	*life(void *args)
 		printer(philo, EAT);
 		gettimeofday(&philo->timestamp, NULL);
 		pthread_mutex_unlock(&philo->timelock);
-		usleep(philo->p->time_to_eat * 1000);
+		my_usleep(philo->p->time_to_eat);
 		pthread_mutex_unlock(philo->p->forks[f1]);
 		pthread_mutex_unlock(philo->p->forks[f2]);
 		printer(philo, SLEEP);
-		usleep(philo->p->time_to_sleep * 1000);
+		my_usleep(philo->p->time_to_sleep);
 		printer(philo, THINK);
 	}
 	return (args);
@@ -109,6 +109,7 @@ int	init_simulation(t_params *params)
 			if (get_timeval(time, philos[i]->timestamp) >= params->time_to_die)
 			{
 				printer(philos[i], DIE);
+				return (0);
 				while (i < params->n_philo)
 				{
 					pthread_join(*philos[i]->thread, NULL);
@@ -116,7 +117,6 @@ int	init_simulation(t_params *params)
 				}
 				free_philosophers(philos, params);
 				pthread_mutex_destroy(&print);
-				return (0);
 			}
 			pthread_mutex_unlock(&philos[i]->timelock);
 			i++;

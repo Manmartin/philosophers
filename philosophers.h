@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 19:11:33 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 19:32:06 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ int			put_error(const char *str);
 int			choose_fork(t_philosoper *philo, const int n);
 long int	get_timeval(struct timeval t1, struct timeval t2);
 void		free_philosophers(t_philosoper **array, t_params *params);
+void		my_usleep(long int ms);
 
 int			parser(const int argc, const char **argv, t_params *params);
 
