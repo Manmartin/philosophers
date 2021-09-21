@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 16:42:06 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 19:11:33 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@
 # define EVIL_ERROR "You are a really \
 bad person who wants to see a poor lonely philosopher die alone :(\n"
 
+/*
+** Philosophers messages
+*/
+# define TFORK  "has taken a fork"
+# define EAT	"is eating"
+# define SLEEP  "is sleeping"
+# define THINK  "is thinking"
+# define DIE    "died"
+
 typedef struct s_params {
 	int				n_philo;
 	int				time_to_die;
@@ -46,15 +55,17 @@ typedef struct s_philosopher {
 	int				id_philo;
 	struct timeval	timestamp;
 	pthread_t		*thread;
+	pthread_mutex_t	timelock;
 	t_params		*p;
 }	t_philosoper;
 
-int		put_error(const char *str);
-int		choose_fork(t_philosoper *philo, const int n);
-void	free_philosophers(t_philosoper **array, t_params *params);
+int			put_error(const char *str);
+int			choose_fork(t_philosoper *philo, const int n);
+long int	get_timeval(struct timeval t1, struct timeval t2);
+void		free_philosophers(t_philosoper **array, t_params *params);
 
-int		parser(const int argc, const char **argv, t_params *params);
+int			parser(const int argc, const char **argv, t_params *params);
 
-void	init_simulation(t_params *params);
+int			init_simulation(t_params *params);
 
 #endif

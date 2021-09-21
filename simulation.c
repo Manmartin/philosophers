@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 14:59:19 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 19:11:47 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,8 @@ static void	printer(t_philosoper *philo, const char *s)
 
 	pthread_mutex_lock(philo->p->printer);
 	gettimeofday(&time, NULL);
-	printf("%li %i %s\n", time.tv_sec * 1000 + time.tv_usec
-		/ 1000, philo->id_philo, s);
-	philo->timestamp = time;
+	printf("%li %i %s\n", get_timeval(time, philo->p->start),
+		philo->id_philo, s);
 	pthread_mutex_unlock(philo->p->printer);
 }
 
@@ -36,15 +35,18 @@ static void	*life(void *args)
 	while (1)
 	{
 		pthread_mutex_lock(philo->p->forks[f1]);
-		printer(philo, "has taken a fork");
+		printer(philo, TFORK);
 		pthread_mutex_lock(philo->p->forks[f2]);
-		printer(philo, "is eating");
+		pthread_mutex_lock(&philo->timelock);
+		printer(philo, EAT);
+		gettimeofday(&philo->timestamp, NULL);
+		pthread_mutex_unlock(&philo->timelock);
 		usleep(philo->p->time_to_eat * 1000);
 		pthread_mutex_unlock(philo->p->forks[f1]);
 		pthread_mutex_unlock(philo->p->forks[f2]);
-		printer(philo, "is sleeping");
+		printer(philo, SLEEP);
 		usleep(philo->p->time_to_sleep * 1000);
-		printer(philo, "is thinking");
+		printer(philo, THINK);
 	}
 	return (args);
 }
@@ -65,7 +67,6 @@ static void	init_forks(t_params *params)
 static t_philosoper	**init_philosophers(t_params *params)
 {
 	t_philosoper	**array;
-	struct timeval	time;
 	int				i;
 
 	i = 0;
@@ -73,20 +74,21 @@ static t_philosoper	**init_philosophers(t_params *params)
 	while (i < params->n_philo)
 		array[i++] = (t_philosoper *)malloc(sizeof(t_philosoper));
 	i = 0;
+	gettimeofday(&params->start, NULL);
 	while (i < params->n_philo)
 	{
 		array[i]->id_philo = i + 1;
 		array[i]->thread = malloc(sizeof(pthread_t *));
 		array[i]->p = params;
-		gettimeofday(&time, NULL);
-		array[i]->timestamp = time;
+		array[i]->timestamp = params->start;
+		pthread_mutex_init(&array[i]->timelock, NULL);
 		pthread_create(array[i]->thread, NULL, life, array[i]);
 		i++;
 	}
 	return (array);
 }
 
-void	init_simulation(t_params *params)
+int	init_simulation(t_params *params)
 {
 	pthread_mutex_t	print;
 	t_philosoper	**philos;
@@ -102,24 +104,24 @@ void	init_simulation(t_params *params)
 	{
 		while (i < params->n_philo)
 		{
+			pthread_mutex_lock(&philos[i]->timelock);
 			gettimeofday(&time, NULL);
-			if ((time.tv_sec * 1000 + time.tv_usec / 1000)
-				- (philos[i]->timestamp.tv_sec * 1000
-					+ philos[i]->timestamp.tv_usec / 1000)
-				>= params->time_to_die)
+			if (get_timeval(time, philos[i]->timestamp) >= params->time_to_die)
 			{
-				//free_philosophers(philos, params);
-				exit(0);
+				printer(philos[i], DIE);
+				while (i < params->n_philo)
+				{
+					pthread_join(*philos[i]->thread, NULL);
+					i++;
+				}
+				free_philosophers(philos, params);
+				pthread_mutex_destroy(&print);
+				return (0);
 			}
+			pthread_mutex_unlock(&philos[i]->timelock);
 			i++;
 		}
 		i = 0;
 	}
-	while (i < params->n_philo)
-	{
-		pthread_join(*philos[i]->thread, NULL);
-		i++;
-	}
-	free_philosophers(philos, params);
-	pthread_mutex_destroy(&print);
+	return (0);
 }
