@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/18 19:24:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 15:27:30 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 16:43:24 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,25 +62,25 @@ static int	parser_atoi(const char *str)
 	while (*str >= 48 && *str <= 57)
 		number = number * 10 + (*str++ - '0');
 	if (number * sign > INT_MAX)
-		put_error("That number is to big\n");
+		return (-1);
 	if (number * sign < INT_MIN)
-		put_error("That number is to small\n");
+		return (-1);
 	return (number * sign);
 }
 
-static void	check_values(const t_params p)
+static int	check_values(const t_params p)
 {
 	if (p.n_philo <= 0 || p.time_to_die <= 0
 		|| p.time_to_eat <= 0 || p.time_to_sleep <= 0)
-		put_error("Parameters' values can't be null or negative\n");
+		return (put_error(N_ERROR));
 	if (p.n_philo > 200)
-		put_error("Sorry, we dont have more than 200 forks\n");
+		return (put_error(N_PHILOS_ERROR));
 	if (p.n_philo == 1)
-		put_error("You are a really \
-bad person who wants to see a poor lonely philosopher die alone :(\n");
+		printf(EVIL_ERROR);
+	return (1);
 }
 
-void	parser(const int argc, const char **argv, t_params *params)
+int	parser(const int argc, const char **argv, t_params *params)
 {
 	int	n;
 
@@ -88,7 +88,7 @@ void	parser(const int argc, const char **argv, t_params *params)
 	while (n < argc)
 	{
 		if (n_parser(argv[n]) != 1)
-			put_error("Wrong arguments' type\n");
+			return (put_error(T_ERROR));
 		n++;
 	}
 	params->n_philo = parser_atoi(argv[1]);
@@ -100,7 +100,9 @@ void	parser(const int argc, const char **argv, t_params *params)
 	{
 		params->eat_number = parser_atoi(argv[5]);
 		if (params->eat_number <= 0)
-			put_error("Parameters' values can't be null or negative\n");
+			return (put_error(N_ERROR));
 	}
-	check_values(*params);
+	if (!check_values(*params))
+		return (0);
+	return (1);
 }

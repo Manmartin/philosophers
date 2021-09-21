@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 20:10:31 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 14:59:19 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@ static void	printer(t_philosoper *philo, const char *s)
 
 	pthread_mutex_lock(philo->p->printer);
 	gettimeofday(&time, NULL);
-	printf("%i %i %s\n", time.tv_usec, philo->id_philo, s);
-	philo->timestamp = time.tv_usec;
+	printf("%li %i %s\n", time.tv_sec * 1000 + time.tv_usec
+		/ 1000, philo->id_philo, s);
+	philo->timestamp = time;
 	pthread_mutex_unlock(philo->p->printer);
 }
 
@@ -78,7 +79,7 @@ static t_philosoper	**init_philosophers(t_params *params)
 		array[i]->thread = malloc(sizeof(pthread_t *));
 		array[i]->p = params;
 		gettimeofday(&time, NULL);
-		array[1]->timestamp = time.tv_usec;
+		array[i]->timestamp = time;
 		pthread_create(array[i]->thread, NULL, life, array[i]);
 		i++;
 	}
@@ -99,12 +100,20 @@ void	init_simulation(t_params *params)
 	philos = init_philosophers(params);
 	while (1)
 	{
-		gettimeofday(&time, NULL);
-		if (time.tv_usec - philos[0]->timestamp >= params->time_to_die * 1000)
+		while (i < params->n_philo)
 		{
-			free_philosophers(philos, params);
-			exit(0);
+			gettimeofday(&time, NULL);
+			if ((time.tv_sec * 1000 + time.tv_usec / 1000)
+				- (philos[i]->timestamp.tv_sec * 1000
+					+ philos[i]->timestamp.tv_usec / 1000)
+				>= params->time_to_die)
+			{
+				//free_philosophers(philos, params);
+				exit(0);
+			}
+			i++;
 		}
+		i = 0;
 	}
 	while (i < params->n_philo)
 	{

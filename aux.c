@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 18:59:19 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/19 18:47:22 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/21 12:57:34 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ static int	ft_strlen(const char *str)
 	return (i);
 }
 
-void	put_error(const char *str)
+int	put_error(const char *str)
 {
 	write(2, str, ft_strlen(str));
-	exit(0);
+	return (0);
 }
 
 int	choose_fork(t_philosoper *philo, const int n)
