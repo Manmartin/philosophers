@@ -3,7 +3,8 @@ NAME = philo
 SRCS = main.c \
 		aux.c \
 		simulation.c \
-		parser.c
+		parser.c \
+		simulation_aux.c
 
 OBJS = $(SRCS:.c=.o)
 

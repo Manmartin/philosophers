@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 19:32:06 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/28 17:37:40 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_params {
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				eat_number;
+	int				on;
 
 	struct timeval	start;
 	pthread_mutex_t	*printer;
@@ -52,21 +53,27 @@ typedef struct s_params {
 }	t_params;
 
 typedef struct s_philosopher {
-	int				id_philo;
+	int				id;
 	struct timeval	timestamp;
 	pthread_t		*thread;
 	pthread_mutex_t	timelock;
 	t_params		*p;
 }	t_philosoper;
 
-int			put_error(const char *str);
-int			choose_fork(t_philosoper *philo, const int n);
-long int	get_timeval(struct timeval t1, struct timeval t2);
-void		free_philosophers(t_philosoper **array, t_params *params);
-void		my_usleep(long int ms);
-
 int			parser(const int argc, const char **argv, t_params *params);
 
 int			init_simulation(t_params *params);
+void		printer(t_philosoper *philo, const char *s);
+
+int			choose_fork(t_philosoper *philo, const int n);
+void		free_philosophers(t_philosoper **array, t_params *params);
+void		eat(t_philosoper *philo);
+int			dead(t_params *params, t_philosoper **philos,
+				pthread_mutex_t *print, int n);
+
+int			put_error(const char *str);
+long int	get_timeval(struct timeval t1, struct timeval t2);
+void		my_usleep(t_params *p, long int ms);
+int			ft_strcmp(const char *s1, const char *s2);
 
 #endif
