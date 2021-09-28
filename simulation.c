@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 17:36:58 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/28 20:07:43 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ static t_philosoper	**init_philosophers(t_params *params)
 	while (i < params->n_philo)
 	{
 		array[i]->id = i + 1;
+		array[i]->meals = 0;
 		array[i]->thread = malloc(sizeof(pthread_t *));
 		array[i]->p = params;
 		array[i]->timestamp = params->start;
@@ -95,7 +96,6 @@ int	init_simulation(t_params *params)
 	struct timeval	time;
 	int				i;
 
-	i = 0;
 	pthread_mutex_init(&print, NULL);
 	params->printer = &print;
 	params->on = 1;
@@ -103,15 +103,17 @@ int	init_simulation(t_params *params)
 	philos = init_philosophers(params);
 	while (1)
 	{
+		i = 0;
 		while (i < params->n_philo)
 		{
 			pthread_mutex_lock(&philos[i]->timelock);
 			gettimeofday(&time, NULL);
 			if (get_timeval(time, philos[i]->timestamp) >= params->time_to_die)
 				return (dead(params, philos, &print, i));
+			if (check_meals(params, philos, &print, i))
+				return (0);
 			pthread_mutex_unlock(&philos[i++]->timelock);
 		}
-		i = 0;
 	}
 	return (0);
 }

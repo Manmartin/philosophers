@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 17:37:40 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/28 19:52:56 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@
 # define N_ERROR "Numeric error\n"
 # define T_ERROR "Wrong arguments' type\n"
 # define N_PHILOS_ERROR "Sorry, we dont have more than 200 forks\n"
-# define EVIL_ERROR "You are a really \
-bad person who wants to see a poor lonely philosopher die alone :(\n"
 
 /*
 ** Philosophers messages
@@ -38,6 +36,8 @@ bad person who wants to see a poor lonely philosopher die alone :(\n"
 # define SLEEP  "is sleeping"
 # define THINK  "is thinking"
 # define DIE    "died"
+
+# define NO_EAT -1
 
 typedef struct s_params {
 	int				n_philo;
@@ -54,6 +54,7 @@ typedef struct s_params {
 
 typedef struct s_philosopher {
 	int				id;
+	int				meals;
 	struct timeval	timestamp;
 	pthread_t		*thread;
 	pthread_mutex_t	timelock;
@@ -68,6 +69,8 @@ void		printer(t_philosoper *philo, const char *s);
 int			choose_fork(t_philosoper *philo, const int n);
 void		free_philosophers(t_philosoper **array, t_params *params);
 void		eat(t_philosoper *philo);
+int			check_meals(t_params *params, t_philosoper **philos,
+				pthread_mutex_t *print, int n);
 int			dead(t_params *params, t_philosoper **philos,
 				pthread_mutex_t *print, int n);
 

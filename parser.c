@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/18 19:24:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/21 16:43:24 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/28 19:48:44 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ static int	check_values(const t_params p)
 		return (put_error(N_ERROR));
 	if (p.n_philo > 200)
 		return (put_error(N_PHILOS_ERROR));
-	if (p.n_philo == 1)
-		printf(EVIL_ERROR);
 	return (1);
 }
 
@@ -95,7 +93,7 @@ int	parser(const int argc, const char **argv, t_params *params)
 	params->time_to_die = parser_atoi(argv[2]);
 	params->time_to_eat = parser_atoi(argv[3]);
 	params->time_to_sleep = parser_atoi(argv[4]);
-	params->eat_number = -1;
+	params->eat_number = NO_EAT;
 	if (argc == 6)
 	{
 		params->eat_number = parser_atoi(argv[5]);

@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/28 16:33:13 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 17:37:54 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/28 20:06:59 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,32 @@ void	free_philosophers(t_philosoper **array, t_params *params)
 void	eat(t_philosoper *philo)
 {
 	pthread_mutex_lock(&philo->timelock);
+	philo->meals += 1;
 	printer(philo, EAT);
 	gettimeofday(&philo->timestamp, NULL);
 	pthread_mutex_unlock(&philo->timelock);
 	my_usleep(philo->p, philo->p->time_to_eat);
+}
+
+int	check_meals(t_params *params, t_philosoper **philos,
+	pthread_mutex_t *print, int n)
+{
+	int	i;
+
+	i = 0;
+	if (params->eat_number == NO_EAT)
+		return (0);
+	while (i < params->n_philo)
+		if (philos[i++]->meals < params->eat_number)
+			return (0);
+	params->on = 0;
+	pthread_mutex_unlock(&philos[n]->timelock);
+	i = 0;
+	while (i < params->n_philo)
+		pthread_join(*philos[i++]->thread, NULL);
+	free_philosophers(philos, params);
+	pthread_mutex_destroy(print);
+	return (1);
 }
 
 int	dead(t_params *params, t_philosoper **philos, pthread_mutex_t *print, int n)
