@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 19:52:56 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/09/30 13:19:17 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
-# include <string.h>
 # include <pthread.h>
 # include <sys/time.h>
 
@@ -39,19 +38,43 @@
 
 # define NO_EAT -1
 
+/*
+** Main struct
+**	Program's args
+**		-n_philo: Number of philosophers and forks
+**		-time_to_die: Number of ms they can go without food before dying
+**		-time_to_eat: Number of ms they takes to eat
+**		-time_to_sleep: Number of ms they takes to sleep
+**		-eat_number: Number of times all philosophers have to eat for the program to end (optional)
+**
+**	Program's internal parameters
+**		-on: State of simulation, if turn 0, simulation stop
+**		-start: Timestamp of the beginning of the program
+**		-printer: Mutex which control messages's prints
+**		-forks: Array of pointers to forks, every fork is a mutex
+*/
 typedef struct s_params {
 	int				n_philo;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				eat_number;
-	int				on;
 
+	int				on;
 	struct timeval	start;
 	pthread_mutex_t	*printer;
 	pthread_mutex_t	**forks;
 }	t_params;
 
+/*
+** Philosophers' structure
+**	-id: Philosopher's identifier
+**	-meals: Number of times the philosopher ate
+**	-timestamp: Timestamp od the last time the philosopher ate
+** 	-thread: Pointer to philosopher's thread
+** 	-timelock: Mutex which control access to philosopher's timestamp
+**	-p: Pointer to program's main struct
+*/
 typedef struct s_philosopher {
 	int				id;
 	int				meals;
@@ -61,11 +84,21 @@ typedef struct s_philosopher {
 	t_params		*p;
 }	t_philosoper;
 
+
+/*
+** parser.c
+*/
 int			parser(const int argc, const char **argv, t_params *params);
 
+/*
+** simulation.c
+*/
 int			init_simulation(t_params *params);
 void		printer(t_philosoper *philo, const char *s);
 
+/*
+** simulation_aux.c
+*/
 int			choose_fork(t_philosoper *philo, const int n);
 void		free_philosophers(t_philosoper **array, t_params *params);
 void		eat(t_philosoper *philo);
@@ -74,6 +107,9 @@ int			check_meals(t_params *params, t_philosoper **philos,
 int			dead(t_params *params, t_philosoper **philos,
 				pthread_mutex_t *print, int n);
 
+/*
+** aux.c
+*/
 int			put_error(const char *str);
 long int	get_timeval(struct timeval t1, struct timeval t2);
 void		my_usleep(t_params *p, long int ms);
