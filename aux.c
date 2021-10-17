@@ -6,25 +6,37 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 18:59:19 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 16:33:36 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/10/10 14:22:00 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int	ft_strlen(const char *str)
+void	free_philosophers(t_philosopher **array, t_params *params)
+{
+	int	i;
+
+	i = 0;
+	while (i < params->n_philo)
+	{
+		free(array[i]->thread);
+		free(array[i]);
+		pthread_mutex_destroy(params->forks[i]);
+		free(params->forks[i]);
+		i++;
+	}
+	free(params->forks);
+	free(array);
+}
+
+int	put_error(const char *str)
 {
 	int	i;
 
 	i = 0;
 	while (str[i])
 		i++;
-	return (i);
-}
-
-int	put_error(const char *str)
-{
-	write(2, str, ft_strlen(str));
+	write(2, str, i);
 	return (0);
 }
 

@@ -6,13 +6,26 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/28 16:33:13 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 20:06:59 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/10/10 17:45:51 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	choose_fork(t_philosoper *philo, const int n)
+int	is_one(t_philosopher *philo)
+{
+	if (philo->p->n_philo == 1)
+	{
+		pthread_mutex_lock(philo->p->forks[0]);
+		printer(philo, TFORK);
+		my_usleep(philo->p, philo->p->time_to_eat);
+		pthread_mutex_unlock(philo->p->forks[0]);
+		return (1);
+	}
+	return (0);
+}
+
+int	choose_fork(t_philosopher *philo, const int n)
 {
 	if (n == 1)
 	{
@@ -24,24 +37,7 @@ int	choose_fork(t_philosoper *philo, const int n)
 		return (philo->id - 1);
 }
 
-void	free_philosophers(t_philosoper **array, t_params *params)
-{
-	int	i;
-
-	i = 0;
-	while (i < params->n_philo)
-	{
-		free(array[i]->thread);
-		free(array[i]);
-		pthread_mutex_destroy(params->forks[i]);
-		free(params->forks[i]);
-		i++;
-	}
-	free(params->forks);
-	free(array);
-}
-
-void	eat(t_philosoper *philo)
+void	eat(t_philosopher *philo)
 {
 	pthread_mutex_lock(&philo->timelock);
 	philo->meals += 1;
@@ -51,7 +47,7 @@ void	eat(t_philosoper *philo)
 	my_usleep(philo->p, philo->p->time_to_eat);
 }
 
-int	check_meals(t_params *params, t_philosoper **philos,
+int	check_meals(t_params *params, t_philosopher **philos,
 	pthread_mutex_t *print, int n)
 {
 	int	i;
@@ -72,17 +68,17 @@ int	check_meals(t_params *params, t_philosoper **philos,
 	return (1);
 }
 
-int	dead(t_params *params, t_philosoper **philos, pthread_mutex_t *print, int n)
+int	dead(t_params *p, t_philosopher **philos, pthread_mutex_t *print, int n)
 {
 	int	i;
 
-	params->on = 0;
+	p->on = 0;
 	printer(philos[n], DIE);
 	pthread_mutex_unlock(&philos[n]->timelock);
 	i = 0;
-	while (i < params->n_philo)
+	while (i < p->n_philo)
 		pthread_join(*philos[i++]->thread, NULL);
-	free_philosophers(philos, params);
+	free_philosophers(philos, p);
 	pthread_mutex_destroy(print);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/18 19:24:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 19:48:44 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/10/10 17:56:19 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,10 @@ int	parser(const int argc, const char **argv, t_params *params)
 	if (argc == 6)
 	{
 		params->eat_number = parser_atoi(argv[5]);
-		if (params->eat_number <= 0)
+		if (params->eat_number < 0)
 			return (put_error(N_ERROR));
+		if (params->eat_number == 0)
+			return (0);
 	}
 	if (!check_values(*params))
 		return (0);

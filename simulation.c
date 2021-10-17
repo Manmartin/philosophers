@@ -6,13 +6,13 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/09 20:23:44 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/28 20:07:43 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/10/10 14:22:37 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	printer(t_philosoper *philo, const char *s)
+void	printer(t_philosopher *philo, const char *s)
 {
 	struct timeval	time;
 
@@ -26,15 +26,17 @@ void	printer(t_philosoper *philo, const char *s)
 
 static void	*life(void *args)
 {
-	t_philosoper	*philo;
+	t_philosopher	*philo;
 	int				f1;
 	int				f2;
 
-	philo = (t_philosoper *)args;
+	philo = (t_philosopher *)args;
+	if (is_one(philo))
+		return (args);
 	f1 = choose_fork(philo, 1);
 	f2 = choose_fork(philo, 2);
 	if (philo->id % 2 == 0)
-		usleep(50);
+		usleep(250);
 	while (philo->p->on)
 	{
 		pthread_mutex_lock(philo->p->forks[f1]);
@@ -64,15 +66,15 @@ static void	init_forks(t_params *params)
 		pthread_mutex_init(params->forks[i++], NULL);
 }
 
-static t_philosoper	**init_philosophers(t_params *params)
+static t_philosopher	**init_philosophers(t_params *params)
 {
-	t_philosoper	**array;
+	t_philosopher	**array;
 	int				i;
 
 	i = 0;
-	array = (t_philosoper **)malloc(sizeof(t_philosoper *) * params->n_philo);
+	array = (t_philosopher **)malloc(sizeof(t_philosopher *) * params->n_philo);
 	while (i < params->n_philo)
-		array[i++] = (t_philosoper *)malloc(sizeof(t_philosoper));
+		array[i++] = (t_philosopher *)malloc(sizeof(t_philosopher));
 	i = 0;
 	gettimeofday(&params->start, NULL);
 	while (i < params->n_philo)
@@ -92,7 +94,7 @@ static t_philosoper	**init_philosophers(t_params *params)
 int	init_simulation(t_params *params)
 {
 	pthread_mutex_t	print;
-	t_philosoper	**philos;
+	t_philosopher	**philos;
 	struct timeval	time;
 	int				i;
 

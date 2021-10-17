@@ -6,7 +6,7 @@
 /*   By: manmarti <manmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/05 01:17:18 by manmarti          #+#    #+#             */
-/*   Updated: 2021/09/30 13:19:17 by manmarti         ###   ########.fr       */
+/*   Updated: 2021/10/10 14:21:34 by manmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@
 **		-time_to_die: Number of ms they can go without food before dying
 **		-time_to_eat: Number of ms they takes to eat
 **		-time_to_sleep: Number of ms they takes to sleep
-**		-eat_number: Number of times all philosophers have to eat for the program to end (optional)
+**		-eat_number: Number of times all philosophers have to eat (optional)
 **
 **	Program's internal parameters
 **		-on: State of simulation, if turn 0, simulation stop
@@ -82,8 +82,7 @@ typedef struct s_philosopher {
 	pthread_t		*thread;
 	pthread_mutex_t	timelock;
 	t_params		*p;
-}	t_philosoper;
-
+}	t_philosopher;
 
 /*
 ** parser.c
@@ -94,22 +93,23 @@ int			parser(const int argc, const char **argv, t_params *params);
 ** simulation.c
 */
 int			init_simulation(t_params *params);
-void		printer(t_philosoper *philo, const char *s);
+void		printer(t_philosopher *philo, const char *s);
 
 /*
 ** simulation_aux.c
 */
-int			choose_fork(t_philosoper *philo, const int n);
-void		free_philosophers(t_philosoper **array, t_params *params);
-void		eat(t_philosoper *philo);
-int			check_meals(t_params *params, t_philosoper **philos,
+int			is_one(t_philosopher *philo);
+int			choose_fork(t_philosopher *philo, const int n);
+void		eat(t_philosopher *philo);
+int			check_meals(t_params *params, t_philosopher **philos,
 				pthread_mutex_t *print, int n);
-int			dead(t_params *params, t_philosoper **philos,
+int			dead(t_params *params, t_philosopher **philos,
 				pthread_mutex_t *print, int n);
 
 /*
 ** aux.c
 */
+void		free_philosophers(t_philosopher **array, t_params *params);
 int			put_error(const char *str);
 long int	get_timeval(struct timeval t1, struct timeval t2);
 void		my_usleep(t_params *p, long int ms);
